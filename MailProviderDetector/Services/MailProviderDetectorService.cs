@@ -12,6 +12,7 @@ namespace MailProviderDetector.Services
         public MailProviderDetectorService() { }
         public DetectedProviderDTO DetectProviderFromEmailAddress(string emailAddress)
         {
+            // validating the input parameter (mail address)
             if(!MailValidator.IsValidEmail(emailAddress))
             {
                 throw new ApplicationException("Invalid e-mail format");
@@ -19,8 +20,10 @@ namespace MailProviderDetector.Services
             DetectedProviderDTO detectedProvider = new DetectedProviderDTO();
             detectedProvider.EmailAddress = emailAddress;
 
+            //get the name of the host from the email address
             var address = emailAddress.Split("@")[1];
-
+            
+            // with DnsResolver we search from the Mx records to see what mail exchange server is responsible
             var resolver = new DnsStubResolver();
             var records = resolver.Resolve<MxRecord>(address, RecordType.Mx);
 
